@@ -1,4 +1,4 @@
-import { Route } from '../types';
+import { Route, User, UserRole } from '../types';
 
 /**
  * Génère les horaires entre deux dates, toutes les 3 heures,
@@ -104,4 +104,41 @@ export const getCities = (): string[] => {
     cities.add(route.arrivalCity);
   });
   return Array.from(cities).sort();
+};
+
+export const mockUsers: Record<string, User & { password: string }> = {
+  admin: {
+    id: 'user-1',
+    email: 'admin@system.com',
+    name: 'Admin Système',
+    role: UserRole.ADMIN,
+    password: 'password123',
+  },
+  manager: {
+    id: 'user-2',
+    email: 'manager@finexs.com',
+    name: 'Manager Finexs',
+    role: UserRole.MANAGER,
+    password: 'password123',
+  },
+  traveler: {
+    id: 'user-3',
+    email: 'traveler@email.com',
+    name: 'Voyageur Client',
+    role: UserRole.TRAVELER,
+    password: 'password123',
+  },
+};
+
+export const authenticate = (email: string, password: string): User | null => {
+  const user = Object.values(mockUsers).find(u => u.email === email);
+  if (user && user.password === password) {
+    const { password: _, ...userWithoutPassword } = user;
+    return userWithoutPassword;
+  }
+  return null;
+};
+
+export const getUserByRole = (role: UserRole): (User & { password: string }) | undefined => {
+  return Object.values(mockUsers).find(u => u.role === role);
 };

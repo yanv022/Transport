@@ -31,3 +31,21 @@ export interface Booking {
   totalPrice: number;
   timestamp: string;
 }
+
+export enum UserRole {
+  ADMIN = 'ADMIN',
+  MANAGER = 'MANAGER',
+  TRAVELER = 'TRAVELER',
+}
+
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  role: UserRole;
+}
+
+export interface AuthState {
+  user: User | null;
+  isAuthenticated: boolean;
+}
