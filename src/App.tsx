@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { SearchProvider } from './context/SearchContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { BookingsProvider } from './context/BookingsContext';
 import { Header, Footer } from './components';
 import { HomePage, RoutesListPage, RouteDetailPage, PassengerFormPage, BookingConfirmationPage, LoginPage } from './pages';
 
@@ -39,9 +40,11 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <SearchProvider>
-          <AppContent />
-        </SearchProvider>
+        <BookingsProvider>
+          <SearchProvider>
+            <AppContent />
+          </SearchProvider>
+        </BookingsProvider>
       </AuthProvider>
     </BrowserRouter>
   );
