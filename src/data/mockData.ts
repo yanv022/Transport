@@ -142,3 +142,7 @@ export const authenticate = (email: string, password: string): User | null => {
 export const getUserByRole = (role: UserRole): (User & { password: string }) | undefined => {
   return Object.values(mockUsers).find(u => u.role === role);
 };
+
+export const generateBookingId = (): string => {
+  return 'BK' + Date.now() + Math.random().toString(36).substr(2, 9);
+};
