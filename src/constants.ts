@@ -24,3 +24,6 @@ export const BRANDING = {
   tagline: 'Votre transport de confiance',
   description: 'Voyagez confortablement entre les villes du Cameroun',
 };
+
+export const API_URL = 'http://localhost:8080/api';
+

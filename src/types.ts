@@ -49,3 +49,20 @@ export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
 }
+
+export interface CreateRoutePayload {
+  departureCity: string;
+  arrivalCity: string;
+  departureTime: string;
+  arrivalTime: string;
+  duration: string;
+  company: string;
+  amenities: string[];
+}
+
+export interface CreateSchedulePayload {
+  travelDate: string; // yyyy-mm-dd
+  price: number;
+  availableSeats: number;
+}
+
