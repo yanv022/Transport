@@ -9,6 +9,8 @@ import { HomePage, RoutesListPage, RouteDetailPage, PassengerFormPage, BookingCo
 import ManagerDashboardPage from './pages/manager/ManagerDashboardPage';
 import CreateRoutePage from './pages/manager/CreateRoutePage';
 import ManageSchedulesPage from './pages/manager/ManageSchedulesPage';
+import EditRoutePage from './components/manager/EditRoutePage';
+
 
 function AppContent() {
     return (
@@ -91,6 +93,25 @@ function AppContent() {
                             </ManagerRoute>
                         }
                     />
+
+                    <Route
+                        path="/manager/routes/:routeId/edit"
+                        element={
+                            <ManagerRoute>
+                                <EditRoutePage />
+                            </ManagerRoute>
+                        }
+                    />
+
+                    <Route
+                        path="/manager/routes/:routeId/schedules"
+                        element={
+                            <ManagerRoute>
+                                <EditRoutePage />
+                            </ManagerRoute>
+                        }
+                    />
+
 
                     <Route
                         path="/manager/routes/:routeId/schedules"
