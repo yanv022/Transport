@@ -74,6 +74,14 @@ function AppContent() {
                             </ManagerRoute>
                         }
                     />
+                    <Route
+                        path="/manager/routes"
+                        element={
+                            <ManagerRoute>
+                                <ManagerDashboardPage />
+                            </ManagerRoute>
+                        }
+                    />
 
                     <Route
                         path="/manager/routes/new"
@@ -118,16 +126,28 @@ function App() {
 }
 
 
-
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, isLoading } = useAuth();
+
+    if (isLoading) return null; // ⏳ attendre la session
+
     return isAuthenticated ? children : <Navigate to="/login" replace />;
 };
 
 const ManagerRoute = ({ children }: { children: JSX.Element }) => {
-    const { user } = useAuth();
-    return user?.role === 'MANAGER' ? children : <Navigate to="/" replace />;
+    const { user, isLoading } = useAuth();
+
+    if (isLoading) {
+        return null; // ou un spinner
+    }
+
+    if (!user || user.role !== 'MANAGER') {
+        return <Navigate to="/" replace />;
+    }
+
+    return children;
 };
+
 
 
 export default App;

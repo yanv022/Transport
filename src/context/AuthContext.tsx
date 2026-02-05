@@ -1,26 +1,33 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+} from 'react';
 import { User } from '../types';
-
 
 interface AuthContextType {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
+  isLoading: boolean;
   login: (email: string, password: string) => Promise<User | null>;
   logout: () => void;
   loadSession: () => void;
 }
 
-
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+                                                                        children,
+                                                                      }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const loadSession = () => {
     const stored = localStorage.getItem('authSession');
+
     if (stored) {
       try {
         const session = JSON.parse(stored);
@@ -30,13 +37,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.removeItem('authSession');
       }
     }
+
+    setIsLoading(false);
   };
 
   useEffect(() => {
     loadSession();
   }, []);
 
-  const login = async (email: string, password: string): Promise<User | null> => {
+  const login = async (
+      email: string,
+      password: string
+  ): Promise<User | null> => {
     try {
       const res = await fetch('http://localhost:8080/api/auth/login', {
         method: 'POST',
@@ -48,34 +60,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       const data = await res.json();
 
-      const user: User = {
+      const loggedUser: User = {
         id: data.id,
         name: data.name,
         email: data.email,
         role: data.role,
       };
 
-      setUser(user);
+      setUser(loggedUser);
       setToken(data.token);
 
       localStorage.setItem(
           'authSession',
           JSON.stringify({
-            user,
+            user: loggedUser,
             token: data.token,
             timestamp: Date.now(),
           })
       );
 
-
-      return user; // 👈 clé
+      return loggedUser;
     } catch (error) {
       console.error('Login error', error);
       return null;
     }
   };
-
-
 
   const logout = () => {
     setUser(null);
@@ -89,9 +98,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             user,
             token,
             isAuthenticated: !!user,
+            isLoading,
             login,
             logout,
-            loadSession
+            loadSession,
           }}
       >
         {children}
@@ -99,7 +109,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 };
 
-export const useAuth = () => {
+export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');

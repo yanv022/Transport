@@ -38,7 +38,7 @@ export const LoginPage: React.FC = () => {
 
     // ✅ NAVIGATION ICI, UNE SEULE FOIS
     if (loggedUser.role === 'MANAGER') {
-      navigate('/manager/routes/new', { replace: true });
+      navigate('/manager', { replace: true });
     } else {
       navigate('/', { replace: true });
     }
