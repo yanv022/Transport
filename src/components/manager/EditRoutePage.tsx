@@ -167,21 +167,33 @@ const EditRoutePage = () => {
                     placeholder="Services (WiFi, Climatisation)"
                 />
 
-                <div className="flex justify-between mt-6">
+                <div className="flex justify-between items-center mt-6">
+                    {/* Annuler */}
                     <button
-                        onClick={handleUpdate}
-                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                        onClick={() => navigate('/manager/routes')}
+                        className="px-4 py-2 rounded border border-gray-300
+               text-gray-700 hover:bg-gray-100 transition"
                     >
-                        Enregistrer
+                        Annuler
                     </button>
 
-                    <button
-                        onClick={() => setConfirmDelete(true)}
-                        className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-                    >
-                        Supprimer
-                    </button>
+                    <div className="flex gap-3">
+                        <button
+                            onClick={handleUpdate}
+                            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                        >
+                            Enregistrer
+                        </button>
+
+                        <button
+                            onClick={() => setConfirmDelete(true)}
+                            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                        >
+                            Supprimer
+                        </button>
+                    </div>
                 </div>
+
             </div>
 
             {/* 🔥 Confirmation suppression */}
