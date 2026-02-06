@@ -21,7 +21,9 @@ Une application React TypeScript moderne pour réserver des trajets en bus avec 
 | **Build** | Vite 5 |
 | **Styling** | Tailwind CSS 3 |
 | **Routing** | React Router 7 |
-| **Database** | Supabase (PostgreSQL) |
+| **Backend** | Spring Boot 3 + Spring Security (JWT) |
+| **Database** | PostgreSQL |
+| **API** | REST sécurisée (JWT Bearer Token) |
 | **Icons** | Lucide React |
 | **QR Code** | qrcode library |
 
@@ -30,11 +32,14 @@ Une application React TypeScript moderne pour réserver des trajets en bus avec 
 L'application suit une architecture modulaire composée de couches distinctes:
 
 ```
-Presentation Layer (Pages + Components)
-         ↓
-Context Layer (State Management)
-         ↓
-Data Layer (Storage + API)
+Frontend (React + Vite)
+↓
+Auth / Context Layer
+↓
+API REST sécurisée (Spring Boot + JWT)
+↓
+Base de données PostgreSQL
+
 ```
 
 ### Architecture Détaillée
@@ -47,7 +52,12 @@ src/
 │   ├── RoutesListPage.tsx    # Liste des trajets
 │   ├── RouteDetailPage.tsx   # Détails d'un trajet
 │   ├── PassengerFormPage.tsx # Formulaire passagers
-│   └── BookingConfirmationPage.tsx # Confirmation
+│   ├── BookingConfirmationPage.tsx # Confirmation
+│   └── manager/
+│       ├── ManagerDashboardPage.tsx   # Dashboard manager
+│       ├── CreateRoutePage.tsx         # Création trajet
+│       ├── EditRoutePage.tsx           # Édition trajet
+│       └── ManageSchedulesPage.tsx     # Gestion horaires
 │
 ├── components/               # Composants réutilisables
 │   ├── Header.tsx            # Barre de navigation
@@ -60,7 +70,10 @@ src/
 │   ├── TicketDisplay.tsx     # Affichage du billet
 │   ├── Button.tsx            # Bouton personnalisé
 │   ├── Breadcrumb.tsx        # Fil d'Ariane
-│   └── index.ts              # Exports centralisés
+│   ├── index.ts              # Exports centralisés
+│   └── manager/
+│       ├── ManagerRouteCard.tsx
+│       └── KPICard.tsx
 │
 ├── context/                  # Gestion d'état globale
 │   ├── AuthContext.tsx       # Authentification
@@ -108,7 +121,7 @@ Fournisseurs de contexte React pour la gestion d'état globale.
 
 ```typescript
 // AuthContext
-useAuth() → { user, isAuthenticated, login(), logout() }
+useAuth() → { user, isAuthenticated, login(), logout() } 
 
 // SearchContext
 useSearch() → { searchParams, setSearchParams }
@@ -237,9 +250,6 @@ Gère l'authentification utilisateur et la session.
 const { user, isAuthenticated, login, logout } = useAuth();
 ```
 
-- **État**: Utilisateur actuel et statut d'authentification
-- **Persistance**: localStorage (`authSession`)
-- **Authentification**: Mock basée sur `mockData.ts`
 
 ### SearchContext
 Partage les paramètres de recherche entre composants.
@@ -286,17 +296,24 @@ L'application utilise localStorage pour la persistance côté client.
 | `bus_bookings` | Réservations de l'utilisateur |
 | `bus_routes_state` | État des trajets et filtres |
 
-### Supabase (Base de données)
-Configuration disponible via variables d'environnement:
-- `VITE_SUPABASE_URL`
-- `VITE_SUPABASE_ANON_KEY`
-
-## Sécurité
 
 ### Authentification
-- Validation des identifiants via `mockData.authenticate()`
-- Session stockée et restaurée via localStorage
-- Redirection automatique vers `/login` si non authentifié
+- Basée sur JWT (JSON Web Tokens)
+- Spring Security pour sécuriser les endpoints API
+
+## API & Sécurité
+
+Toutes les requêtes protégées utilisent un wrapper `authFetch` :
+
+- Ajout automatique du token JWT
+- Gestion centralisée des erreurs
+- Protection des routes manager
+
+Exemple :
+```ts
+authFetch('/routes', 'POST', payload) → { success: boolean, data: Route, error?: string }
+```
+
 
 ### Rôles Utilisateurs
 - **ADMIN**: Accès complet à l'administration
@@ -309,8 +326,7 @@ Configuration disponible via variables d'environnement:
 Créer un fichier `.env` à la racine:
 
 ```env
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_ANON_KEY=your_anon_key
+VITE_API_BASE_URL=http://localhost:8080/api
 ```
 
 ### Dépendances
